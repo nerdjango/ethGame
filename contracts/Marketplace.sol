@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.2;
+pragma solidity ^0.8.0;
+pragma abicoder v2;
 
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 
-contract Marketplace is IERC1155Receiver {
+contract Marketplace is IERC1155Receiver{
     IERC1155 private _token;
+    bytes4 private constant _INTERFACE_ID_ERC165 = 0x01ffc9a7;
+    bytes4 private constant _INTERFACE_ID_ERC1155 = 0xd9b67a26;
 
     mapping(uint => uint) price;
 
@@ -34,7 +37,7 @@ contract Marketplace is IERC1155Receiver {
         uint256 id,
         uint256 value,
         bytes calldata data
-    ) external returns (bytes4){
+    ) external pure returns (bytes4){
         return bytes4(keccak256("onERC1155Received(address,address,uint256,uint256,bytes)"));
     }
 
@@ -44,7 +47,11 @@ contract Marketplace is IERC1155Receiver {
         uint256[] calldata ids,
         uint256[] calldata values,
         bytes calldata data
-    ) external returns (bytes4){
+    ) external pure returns (bytes4){
         return bytes4(keccak256("onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"));
+    }
+
+    function supportsInterface(bytes4 interfaceId) external pure returns (bool){
+        return (interfaceId == _INTERFACE_ID_ERC165 || interfaceId == _INTERFACE_ID_ERC1155);
     }
 }
