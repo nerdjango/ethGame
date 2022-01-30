@@ -6,11 +6,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/web3@1.6.1/dist/web3.min.js"></script>
+    <script src="abi.js"></script>
+    <script src="index.js"></script>
     <title>Our Awesome Game</title>
 </head>
 
 <body>
-    <h1>Game Website</h1>
+    <h1>Secure the Bag</h1>
+    <button onclick="buy(1)">Buy Pump Talisman, 0.0001 ETH</button>
+    <button onclick="buy(2)">Buy Super Boots, 0.0002 ETH</button>
+    <button onclick="buy(3)">Buy Time Warp Cape, 0.0003 ETH</button>
+    <br>
+    <br>
     <script>
         var cursors;
         var knight;
@@ -25,6 +33,13 @@
         var timeLeftTimer;
 
         var gameOver = false;
+
+        // Pump Tallisman
+        var COIN_GENERATION_INTERVAL = 3000;
+        // Supper boots
+        var PLAYER_SPEED = 150;
+        // Time warp  cape
+        var GAME_SECOND = 1000;
 
         // configure the game (height, width, game loop function)
         var config = {
@@ -46,6 +61,13 @@
                 }
             }
         }
+
+        var game;
+        getUserItems(
+            function() {
+                game = new Phaser.Game(config);
+            }
+        ); //Get Items
 
         function gamePreload() {
             // preload asset
@@ -185,14 +207,14 @@
             cursors = this.input.keyboard.createCursorKeys()
 
             coinTimer = this.time.addEvent({
-                delay: Phaser.Math.Between(3000, 5000),
+                delay: COIN_GENERATION_INTERVAL,
                 callback: generateCoins,
                 callbackScope: this,
                 repeat: -1
             })
 
             timeLeftTimer = this.time.addEvent({
-                delay: 1000,
+                delay: GAME_SECOND,
                 callback: updateTimeLeft,
                 callbackScope: this,
                 repeat: -1
@@ -237,12 +259,13 @@
         function gameUpdate() {
             // monitoring input and telling game how to reload
             // console.log("Updating!!!")
+
             if (cursors.left.isDown) {
-                knight.setVelocityX(-150)
+                knight.setVelocityX(-PLAYER_SPEED)
                 knight.play("knight_run", true)
                 knight.flipX = true
             } else if (cursors.right.isDown) {
-                knight.setVelocityX(150)
+                knight.setVelocityX(PLAYER_SPEED)
                 knight.play("knight_run", true)
                 knight.flipX = false
             } else {
@@ -262,8 +285,6 @@
                 gameOver = true
             }
         }
-
-        var game = new Phaser.Game(config);
     </script>
 </body>
 
